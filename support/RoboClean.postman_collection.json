@@ -1,0 +1,300 @@
+{
+	"info": {
+		"_postman_id": "c8c0c190-9c13-4fa6-a6e9-95f97d0c20c5",
+		"name": "RoboClean",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "43752385"
+	},
+	"item": [
+		{
+			"name": "Basic Chat",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Get the raw response text",
+							"let raw = pm.response.text();",
+							"",
+							"// Split into lines",
+							"let lines = raw.split('\\n');",
+							"",
+							"// Extract and concatenate text values",
+							"let fullText = lines",
+							"    .filter(line => line.startsWith('data: '))",
+							"    .map(line => {",
+							"        try {",
+							"            return JSON.parse(line.slice(6)).text;",
+							"        } catch (e) {",
+							"            return ''; // skip malformed lines",
+							"        }",
+							"    })",
+							"    .join('');",
+							"",
+							"console.log(\"AI REPLY:\")",
+							"console.log(fullText);",
+							"",
+							"// Get existing messages from environment",
+							"let messagesRaw = pm.environment.get('messages') || '[]';",
+							"let messages;",
+							"",
+							"try {",
+							"    messages = JSON.parse(messagesRaw);",
+							"} catch (e) {",
+							"    messages = [];",
+							"}",
+							"",
+							"// Append new assistant message",
+							"messages.push({",
+							"    role: \"assistant\",",
+							"    content: fullText",
+							"});",
+							"",
+							"// Store back into environment",
+							"pm.environment.set('messages', JSON.stringify(messages));",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// Parse and update messages",
+							"let messages = [];",
+							"",
+							"try {",
+							"  messages = JSON.parse(pm.environment.get('messages') || '[]');",
+							"} catch (e) {",
+							"  messages = [];",
+							"}",
+							"",
+							"// Get user message from form data",
+							"const formData = pm.request.body.formdata.toJSON();",
+							"const prompt = formData.find(p => p.key === 'prompt')?.value || '';",
+							"",
+							"messages.push({ role: 'user', content: prompt });",
+							"",
+							"// Save back to environment",
+							"pm.environment.set('messages', JSON.stringify(messages));",
+							"",
+							"// Set raw body as stringified JSON with real array",
+							"pm.request.body.update({",
+							"  mode: 'raw',",
+							"  raw: JSON.stringify({ messages })",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "prompt",
+							"value": "Which models are available?",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{BASE_URI}}/chat",
+					"host": [
+						"{{BASE_URI}}"
+					],
+					"path": [
+						"chat"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Requires Lookup",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Get the raw response text",
+							"let raw = pm.response.text();",
+							"",
+							"// Split into lines",
+							"let lines = raw.split('\\n');",
+							"",
+							"// Extract and concatenate text values",
+							"let fullText = lines",
+							"    .filter(line => line.startsWith('data: '))",
+							"    .map(line => {",
+							"        try {",
+							"            return JSON.parse(line.slice(6)).text;",
+							"        } catch (e) {",
+							"            return ''; // skip malformed lines",
+							"        }",
+							"    })",
+							"    .join('');",
+							"",
+							"console.log(\"AI REPLY:\")",
+							"console.log(fullText);",
+							"",
+							"// Get existing messages from environment",
+							"let messagesRaw = pm.environment.get('messages') || '[]';",
+							"let messages;",
+							"",
+							"try {",
+							"    messages = JSON.parse(messagesRaw);",
+							"} catch (e) {",
+							"    messages = [];",
+							"}",
+							"",
+							"// Append new assistant message",
+							"messages.push({",
+							"    role: \"assistant\",",
+							"    content: fullText",
+							"});",
+							"",
+							"// Store back into environment",
+							"pm.environment.set('messages', JSON.stringify(messages));",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// Parse and update messages",
+							"let messages = [];",
+							"",
+							"try {",
+							"  messages = JSON.parse(pm.environment.get('messages') || '[]');",
+							"} catch (e) {",
+							"  messages = [];",
+							"}",
+							"",
+							"// Get user message from form data",
+							"const formData = pm.request.body.formdata.toJSON();",
+							"const prompt = formData.find(p => p.key === 'prompt')?.value || '';",
+							"",
+							"messages.push({ role: 'user', content: prompt });",
+							"",
+							"// Save back to environment",
+							"pm.environment.set('messages', JSON.stringify(messages));",
+							"",
+							"// Set raw body as stringified JSON with real array",
+							"pm.request.body.update({",
+							"  mode: 'raw',",
+							"  raw: JSON.stringify({ messages })",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "prompt",
+							"value": "What is the battery life of the RoboClean mini?",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{BASE_URI}}/chat",
+					"host": [
+						"{{BASE_URI}}"
+					],
+					"path": [
+						"chat"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Suggestions",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// Parse and update messages",
+							"let messages = [];",
+							"",
+							"try {",
+							"  messages = JSON.parse(pm.environment.get('messages') || '[]');",
+							"} catch (e) {",
+							"  messages = [];",
+							"}",
+							"",
+							"// Set raw body as stringified JSON with real array",
+							"pm.request.body.update({",
+							"  mode: 'raw',",
+							"  raw: JSON.stringify({ messages })",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{BASE_URI}}/suggestions",
+					"host": [
+						"{{BASE_URI}}"
+					],
+					"path": [
+						"suggestions"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

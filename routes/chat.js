@@ -1,6 +1,5 @@
 import express from "express";
 import { openai } from "../openai/index.js";
-import { lookupProductInfo } from "../utils/lookup.js";
 
 const router = express.Router();
 
